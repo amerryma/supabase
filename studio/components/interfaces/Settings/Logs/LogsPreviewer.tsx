@@ -199,11 +199,13 @@ export const LogsPreviewer: React.FC<Props> = ({
             onHistogramToggle={() => setShowChart(!showChart)}
           />
         </LoadingOpacity>
+        {!error && (
         <div className="p-2">
-          <Button onClick={() => loadOlder()} icon={<IconRewind />} type="default">
+            <Button onClick={loadOlder} icon={<IconRewind />} type="default">
             Load older
           </Button>
         </div>
+        )}
         {error && (
           <div className="flex w-full h-full justify-center items-center mx-auto">
             <Card className="flex flex-col gap-y-2  w-2/5 bg-scale-400">
