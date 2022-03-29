@@ -178,7 +178,7 @@ export const LogsPreviewer: React.FC<Props> = ({
       <div
         className={
           'transition-all duration-500 ' +
-          (showChart && !isLoading ? 'opacity-100 h-48 pt-4 mb-4' : 'opacity-0 h-0')
+          (showChart && !isLoading ? 'opacity-100 h-24 pt-4 mb-4' : 'opacity-0 h-0')
         }
       >
         <div className={condensedLayout ? 'px-4' : ''}>
