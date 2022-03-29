@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { useEffect, useState, useMemo } from 'react'
-import { Button, IconDownloadCloud, IconEye, IconEyeOff, Typography } from '@supabase/ui'
+import { Button, IconEye, IconEyeOff, Typography } from '@supabase/ui'
 import DataGrid from '@supabase/react-data-grid'
 
 import LogSelection from './LogSelection'
@@ -10,12 +10,14 @@ import { SeverityFormatter, ResponseCodeFormatter, HeaderFormmater } from './Log
 // column renders
 import DatabaseApiColumnRender from './LogColumnRenderers/DatabaseApiColumnRender'
 import DatabasePostgresColumnRender from './LogColumnRenderers/DatabasePostgresColumnRender'
+import CSVButton from 'components/ui/CSVButton'
 
 interface Props {
   data?: Array<LogData | Object>
   queryType?: QueryType
   onHistogramToggle?: () => void
   isHistogramShowing?: boolean
+  showDownload?: boolean
 }
 type LogMap = { [id: string]: LogData }
 
@@ -24,7 +26,13 @@ type LogMap = { [id: string]: LogData }
  *
  * When in custom data display mode, the side panel will not open when focusing on logs.
  */
-const LogTable = ({ data = [], queryType, onHistogramToggle, isHistogramShowing }: Props) => {
+const LogTable = ({
+  data = [],
+  queryType,
+  onHistogramToggle,
+  isHistogramShowing,
+  showDownload,
+}: Props) => {
   const [focusedLog, setFocusedLog] = useState<LogData | null>(null)
   const columnNames = Object.keys(data[0] || {})
   const hasId = columnNames.includes('id')
@@ -41,10 +49,8 @@ const LogTable = ({ data = [], queryType, onHistogramToggle, isHistogramShowing 
   })
   let columns
   if (!queryType) {
-    console.log('no query type')
     columns = DEFAULT_COLUMNS
   } else {
-    console.log('has query type', queryType)
     switch (queryType) {
       case 'api':
         columns = DatabaseApiColumnRender
@@ -180,6 +186,7 @@ const LogTable = ({ data = [], queryType, onHistogramToggle, isHistogramShowing 
       return dedupedData
     }
   }, [stringData])
+
   return (
     <>
       <section
@@ -188,19 +195,7 @@ const LogTable = ({ data = [], queryType, onHistogramToggle, isHistogramShowing 
       >
         {!queryType && (
           <div>
-            <div
-              className="
-        w-full bg-scale-100 dark:bg-scale-300 
-
-       rounded-tl rounded-tr
-       border-t
-       border-l
-       border-r
-
-        flex items-center justify-between
-        px-5 py-2
-      "
-            >
+            <div className="w-full bg-scale-100 dark:bg-scale-300 rounded-tl rounded-tr border-t border-l border-r flex items-center justify-between px-5 py-2 ">
               <div className="flex items-center gap-2">
                 {data && data.length ? (
                   <>
@@ -221,9 +216,7 @@ const LogTable = ({ data = [], queryType, onHistogramToggle, isHistogramShowing 
                     Histogram
                   </Button>
                 )}
-                <Button type="default" icon={<IconDownloadCloud />}>
-                  Download
-                </Button>
+                {showDownload && <CSVButton data={data}>Download</CSVButton>}
               </div>
             </div>
           </div>
@@ -269,7 +262,6 @@ const LogTable = ({ data = [], queryType, onHistogramToggle, isHistogramShowing 
             }}
             onRowClick={(r) => setFocusedLog(r)}
           />
-          {/* {focusedLog && ( */}
           <div
             className={
               queryType ? 'w-1/2 flex flex-col' : focusedLog ? 'w-1/2 flex flex-col' : 'w-0 hidden'
@@ -281,7 +273,6 @@ const LogTable = ({ data = [], queryType, onHistogramToggle, isHistogramShowing 
               queryType={queryType}
             />
           </div>
-          {/* )} */}
         </div>
       </section>
     </>

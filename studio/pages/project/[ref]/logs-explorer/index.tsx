@@ -92,7 +92,7 @@ export const LogsExplorerPage: NextPage = () => {
         <div className="flex flex-col flex-grow relative pb-8">
           <LoadingOpacity active={isLoading}>
             <div className="flex flex-grow h-full">
-              <LogTable data={logData} />
+              <LogTable data={logData} showDownload />
             </div>
           </LoadingOpacity>
 
